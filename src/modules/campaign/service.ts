@@ -55,7 +55,7 @@ export const createCampaign = async (data: any) => {
         platforms: platforms.length > 0 ? platforms : (data.config?.platforms || []),
         duration: data.duration || data.config?.duration,
         format: data.format || data.config?.format,
-        budget: Number(data.budget) || 0,
+        budget: Math.max(0, Number(data.budget) || 0),
         startDate: data.startDate ? new Date(data.startDate) : null,
         endDate: data.endDate ? new Date(data.endDate) : null,
         status: "draft",
@@ -82,9 +82,14 @@ export const createCampaign = async (data: any) => {
 export const updateCampaign = async (id: string, data: any) => {
   if (!isValidCampaignId(id)) throw new Error('Invalid Campaign ID format');
   try {
+    const updateData = { ...data };
+    if (updateData.budget !== undefined) {
+      updateData.budget = Math.max(0, Number(updateData.budget) || 0);
+    }
+
     const campaign = await prisma.campaign.update({
       where: { id },
-      data
+      data: updateData
     });
 
     // Trigger notification
