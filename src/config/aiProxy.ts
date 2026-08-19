@@ -20,13 +20,13 @@ export const proxyPost = async (path: string, body: any) => {
       headers,
       timeout: Number(process.env.API_TIMEOUT) || 600000, 
     });
-    // console.log(`[AIProxy] Received successful response from ${fullUrl}:`, JSON.stringify(response.data, null, 2));
+    console.log(`[AIProxy] POST response from ${fullUrl}:`, JSON.stringify(response.data));
     return response.data;
   } catch (error) {
     const axiosErr = error as AxiosError;
     if (axiosErr.response) {
       const data = axiosErr.response.data as any;
-      // console.error(`[AIProxy] Error from AI backend ${fullUrl}:`, JSON.stringify(data, null, 2));
+      console.error(`[AIProxy] POST error from ${fullUrl}:`, JSON.stringify(data));
       if (Array.isArray(data?.detail)) {
         throw { status: axiosErr.response.status, message: data.detail.map((e: any) => `${e.loc?.join('.') || ''} - ${e.msg}`).join(', '), data };
       }

@@ -705,6 +705,8 @@ export const approveStep = async (req: AuthRequest, res: Response): Promise<any>
       selected_asset_id: req.body.selected_asset_id // Support asset selection if provided
     };
 
+    console.log(`[AIDirectorController] approveStep called: session_id=${session_id}`, params);
+
     const result = await directorService.approveStep(session_id as string, params);
 
     // 1. Persist the updated state to DB
