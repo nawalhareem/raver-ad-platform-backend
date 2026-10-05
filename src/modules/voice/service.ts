@@ -113,7 +113,17 @@ export const generateElevenLabsTTS = async (voiceId: string, text: string) => {
         return await tryDirect();
       } catch (error: any) {
         const status = error?.response?.status;
-        if (status === 401 || status === 403) {
+        const raw = error?.response?.data;
+        let body = '';
+        if (Buffer.isBuffer(raw)) body = raw.toString('utf8');
+        else if (typeof raw === 'string') body = raw;
+        else if (raw) body = JSON.stringify(raw);
+        if (
+          status === 401 ||
+          status === 403 ||
+          body.includes('invalid_api_key') ||
+          body.includes('api_key_id_used')
+        ) {
           console.warn('[TTS] ElevenLabs key rejected; proxying to Video API');
           return await generateTtsViaVideo(requested, text);
         }
